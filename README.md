@@ -1,26 +1,20 @@
 # paper-source-trace
 
-## Prerequisites
+### Prerequisites
 - Linux
 - Python 3.9
 - PyTorch 1.10.0+cu111
 
-## Getting Started
 
-### Installation
+## Setup
+### Virtual Environment Setup
+1. Install Python 3.9 by running `$ brew install python@3.9`
+2. Create virtual environment by running `$ python3.9 -m venv venv`
+3, Activate virtual environment by running `$ source venv/bin/activate`
+4. Deactivate by running `$ deactivate`
 
-Clone this repo.
-
-```bash
-git clone https://github.com/THUDM/paper-source-trace.git
-cd paper-source-trace
-```
-
-Please install dependencies by
-
-```bash
-pip install -r requirements.txt
-```
+### Install dependencies
+Run ` $ pip install -r requirements.txt`
 
 ## PST Dataset
 The dataset can be downloaded from [BaiduPan](https://pan.baidu.com/s/1I_HZXBx7U0UsRHJL5JJagw?pwd=bft3) with password bft3, [Aliyun](https://open-data-set.oss-cn-beijing.aliyuncs.com/oag-benchmark/kddcup-2024/PST/PST.zip) or [DropBox](https://www.dropbox.com/scl/fi/namx1n55xzqil4zbkd5sv/PST.zip?rlkey=impcbm2acqmqhurv2oj0xxysx&dl=1).
