@@ -1,5 +1,7 @@
 # Byte-compiled / optimized / DLL files
 
+.jsonl
+tmp/
 data/
 out/
 glm/saved/
@@ -139,3 +141,6 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# macOS clutter
+.DS_Store
