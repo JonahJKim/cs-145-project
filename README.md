@@ -51,6 +51,8 @@ python method3.py
 ```bash
 # run SciBERT
 python bert.py  # output at out/kddcup/scibert/
+python bert_with_eval.py  # used for our competition entries (example at results/sam_bert_sub_1)
+python final_scibert_with_eval.py  # final version of our SciBERT model
 ```
 
 ## Baselines for [KDD Cup 2024](https://www.biendata.xyz/competition/pst_kdd_2024/)
