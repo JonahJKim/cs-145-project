@@ -1,4 +1,6 @@
 import json, os, time
+import settings
+import xml.etree.ElementTree as ET
 from zhipuai import ZhipuAI
 
 ## connection details for glm
@@ -28,7 +30,7 @@ def create_batch_file(batch_name: str, system_prompt: str, user_prompt: str):
         xml_paper = f"{xml_dir}/{paper_id}.xml"
         xml_paper_contents = open(xml_paper).read()
         request_json = {
-          "custom_id": f"request-{batch_name}-{paper_id}-retry-2",
+          "custom_id": f"{paper_id}",
           "method": "POST",
           "url": "/v4/chat/completions",
           "body": {
@@ -65,7 +67,7 @@ def create_batch(batch_filename: str) -> str:
     print(f"{create}\n")
     return create.id
 
-def parse_batch_results(batch_id: str, batch_name: str):
+def get_batch_results(batch_id: str, batch_name: str):
     query_interval_time = 20
     response = client.batches.retrieve(batch_id)
     while response.status != "completed":
@@ -76,7 +78,37 @@ def parse_batch_results(batch_id: str, batch_name: str):
     content = client.files.content(str(response.output_file_id))
     content.write_to_file(batch_output_filename(batch_name))
 
+def process_jsonl_file(file_path):
+    with open(file_path, 'r') as file:
+        for line_number, line in enumerate(file, start=1):
+            try:
+                json_object = json.loads(line)
+                id = json_object.get('custom_id')
+                choices = json_object.get('response', {}).get('choices', [])
+                new_data = choices[0].get('message', {}).get('content')
+                xml_paper = f"{settings.DATA_DIR}/{id}.xml"
+                ## FIXME: @sam idk what the correct directories are for this stuff
+                # write new_data to body section of xml
+                if os.path.exists(xml_paper):
+                    tree = ET.parse(xml_paper)
+                    root = tree.getroot()
+                    body = root.find('.//body')
+                    if body is not None:
+                        if body.text:
+                            body.text += f"\n{new_data}"
+                        else:
+                            body.text = new_data
+                        tree.write(xml_paper, encoding='utf-8', xml_declaration=True)
+                        print(f"Updated XML file: {xml_paper}")
+                    else:
+                        print(f"No body section found in XML file: {xml_paper}")
+                else:
+                    print(f"XML file not found: {xml_paper}")
+
+            except json.JSONDecodeError as e:
+                print(f"Error decoding JSON on line {line_number}: {e}")
+
 def process_method(batch_name: str, system_prompt: str, user_prompt: str):
     create_batch_file(batch_name, system_prompt, user_prompt)
     batch_id = create_batch(batch_input_filename(batch_name))
-    parse_batch_results(batch_id, batch_name)
+    get_batch_results(batch_id, batch_name)
